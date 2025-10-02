@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Galleria GIF</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .gallery img {
+      width: 160px;
+      height: 120px;
+      object-fit: contain;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">GIF nella cartella</h2>
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    // ⚠️ Questa parte funziona solo se il file è servito da un server (es. localhost, drive, xampp)
+    fetch('.')
+      .then(response => response.text())
+      .then(data => {
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, 'text/html');
+        const links = Array.from(htmlDoc.querySelectorAll('a'));
+        const gifLinks = links
+          .map(link => link.getAttribute('href'))
+          .filter(href => href && href.match(/\.gif$/i));
+
+        const gallery = document.getElementById('gallery');
+        gifLinks.forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = src;
+          gallery.appendChild(img);
+        });
+      })
+      .catch(err => {
+        document.getElementById('gallery').innerText =
+          '⚠️ Caricamento dinamico disponibile solo con un server locale o remoto.';
+        console.error('Errore:', err);
+      });
+  </script>
+</body>
+</html>
